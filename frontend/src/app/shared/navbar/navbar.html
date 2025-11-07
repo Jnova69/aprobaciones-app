@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/home">
+    <mat-icon>home</mat-icon>
+  </button>
+  
+  <span class="title">Sistema de Aprobaciones</span>
+  
+  <span class="spacer"></span>
+  
+  <button mat-button routerLink="/solicitudes">
+    <mat-icon>list</mat-icon>
+    Solicitudes
+  </button>
+  
+  <button mat-raised-button color="accent" routerLink="/solicitudes/nueva">
+    <mat-icon>add</mat-icon>
+    Nueva Solicitud
+  </button>
+  
+  <span class="user-info">
+    <mat-icon>account_circle</mat-icon>
+    {{ usuarioActual.nombreCompleto }}
+  </span>
+</mat-toolbar>

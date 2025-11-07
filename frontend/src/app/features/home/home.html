@@ -1,0 +1,60 @@
+<div class="container">
+  <h1>Bienvenido al Sistema de Aprobaciones</h1>
+  
+  <div class="stats-container" *ngIf="!loading">
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon total">folder</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{ totalSolicitudes }}</h2>
+        <p>Total Solicitudes</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon pendiente">schedule</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{ pendientes }}</h2>
+        <p>Pendientes</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon aprobada">check_circle</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{ aprobadas }}</h2>
+        <p>Aprobadas</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon rechazada">cancel</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{ rechazadas }}</h2>
+        <p>Rechazadas</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="spinner-container" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" routerLink="/solicitudes/nueva">
+      <mat-icon>add</mat-icon>
+      Crear Nueva Solicitud
+    </button>
+    <button mat-raised-button routerLink="/solicitudes">
+      <mat-icon>list</mat-icon>
+      Ver Todas las Solicitudes
+    </button>
+  </div>
+</div><p>home works!</p>
