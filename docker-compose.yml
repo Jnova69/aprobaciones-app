@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: aprobaciones-db
+    environment:
+      POSTGRES_DB: aprobaciones_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - aprobaciones-network
+
+  # Opcional: PgAdmin para ver la BD visualmente
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: aprobaciones-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - aprobaciones-network
+
+volumes:
+  postgres_data:
+
+networks:
+  aprobaciones-network:
+    driver: bridge
