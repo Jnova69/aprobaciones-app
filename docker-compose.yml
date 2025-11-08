@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
@@ -15,6 +13,12 @@ services:
       - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - aprobaciones-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d aprobaciones_db"]
+      interval: 5s       # cada 5 segundos
+      timeout: 3s        # espera hasta 3 segundos por respuesta
+      retries: 5         # intenta 5 veces antes de marcar unhealthy
+      start_period: 10s
 
   # Opcional: PgAdmin para ver la BD visualmente
   pgadmin:
@@ -30,6 +34,41 @@ services:
     networks:
       - aprobaciones-network
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    container_name: aprobaciones-backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+      DB_DATABASE: aprobaciones_db
+      PORT: 3000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - aprobaciones-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aprobaciones-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - aprobaciones-network
+    restart: unless-stopped
+    
 volumes:
   postgres_data:
 
