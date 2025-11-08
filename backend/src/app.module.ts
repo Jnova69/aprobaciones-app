@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { TiposSolicitudModule } from './modules/tipos-solicitud/tipos-solicitud.module';
 import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
-import { NotificacionesModule } from './modules/notificaciones/notificaciones.module';
 import { HistorialModule } from './modules/historial/historial.module';
+import { NotificacionesModule } from './modules/notificaciones/notificaciones.module';
 
 @Module({
   imports: [
@@ -33,8 +34,8 @@ import { HistorialModule } from './modules/historial/historial.module';
     UsuariosModule,
     TiposSolicitudModule,
     SolicitudesModule,
-    NotificacionesModule,
     HistorialModule,
+    NotificacionesModule,
   ],
 })
 export class AppModule {}

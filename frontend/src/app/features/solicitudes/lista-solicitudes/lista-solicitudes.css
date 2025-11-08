@@ -1,0 +1,103 @@
+.container {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+h1 {
+  margin: 0;
+  color: #3f51b5;
+}
+
+.filters {
+  margin-bottom: 20px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-buttons button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-buttons button.active {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.solicitudes-table {
+  width: 100%;
+}
+
+.solicitudes-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+.solicitudes-table td,
+.solicitudes-table th {
+  padding: 15px;
+}
+
+.estado-chip {
+  font-weight: 500;
+  padding: 5px 15px;
+  border-radius: 16px;
+}
+
+.estado-chip.pendiente {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.estado-chip.aprobado {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.estado-chip.rechazado {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.no-data {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.no-data mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+}
+
+.no-data p {
+  margin-top: 20px;
+  font-size: 1.1rem;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+mat-row:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}

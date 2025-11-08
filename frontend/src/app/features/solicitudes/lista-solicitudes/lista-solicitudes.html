@@ -1,1 +1,137 @@
-<p>lista-solicitudes works!</p>
+<div class="container">
+  <div class="header">
+    <h1>Gestión de Solicitudes</h1>
+    <button mat-raised-button color="primary" routerLink="/solicitudes/nueva">
+      <mat-icon>add</mat-icon>
+      Nueva Solicitud
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <mat-card class="filters">
+    <mat-card-content>
+      <div class="filter-buttons">
+        <button 
+          mat-button 
+          [class.active]="filtroEstado === 'TODAS'"
+          (click)="cambiarFiltro('TODAS')">
+          Todas
+        </button>
+        <button 
+          mat-button 
+          [class.active]="filtroEstado === 'PENDIENTE'"
+          (click)="cambiarFiltro('PENDIENTE')">
+          <mat-icon>schedule</mat-icon>
+          Pendientes
+        </button>
+        <button 
+          mat-button 
+          [class.active]="filtroEstado === 'APROBADO'"
+          (click)="cambiarFiltro('APROBADO')">
+          <mat-icon>check_circle</mat-icon>
+          Aprobadas
+        </button>
+        <button 
+          mat-button 
+          [class.active]="filtroEstado === 'RECHAZADO'"
+          (click)="cambiarFiltro('RECHAZADO')">
+          <mat-icon>cancel</mat-icon>
+          Rechazadas
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading -->
+  <div class="spinner-container" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Tabla de solicitudes -->
+  <mat-card *ngIf="!loading">
+    <table mat-table [dataSource]="solicitudesFiltradas" class="solicitudes-table">
+      
+      <!-- Código -->
+      <ng-container matColumnDef="codigoSolicitud">
+        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <td mat-cell *matCellDef="let solicitud">
+          <strong>{{ solicitud.codigoSolicitud }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Título -->
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef>Título</th>
+        <td mat-cell *matCellDef="let solicitud">{{ solicitud.titulo }}</td>
+      </ng-container>
+
+      <!-- Tipo -->
+      <ng-container matColumnDef="tipoSolicitud">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let solicitud">
+          {{ solicitud.tipoSolicitud?.nombre }}
+        </td>
+      </ng-container>
+
+      <!-- Solicitante -->
+      <ng-container matColumnDef="solicitante">
+        <th mat-header-cell *matHeaderCellDef>Solicitante</th>
+        <td mat-cell *matCellDef="let solicitud">
+          {{ solicitud.solicitante?.nombreCompleto }}
+        </td>
+      </ng-container>
+
+      <!-- Responsable -->
+      <ng-container matColumnDef="responsable">
+        <th mat-header-cell *matHeaderCellDef>Responsable</th>
+        <td mat-cell *matCellDef="let solicitud">
+          {{ solicitud.responsable?.nombreCompleto }}
+        </td>
+      </ng-container>
+
+      <!-- Estado -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let solicitud">
+          <mat-chip [class]="'estado-chip ' + getEstadoClass(solicitud.estado)">
+            {{ solicitud.estado }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <!-- Fecha -->
+      <ng-container matColumnDef="fechaSolicitud">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let solicitud">
+          {{ solicitud.fechaSolicitud | date:'dd/MM/yyyy HH:mm' }}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let solicitud">
+          <button 
+            mat-icon-button 
+            [routerLink]="['/solicitudes', solicitud.id]"
+            matTooltip="Ver detalles">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Mensaje cuando no hay datos -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <div class="no-data">
+            <mat-icon>inbox</mat-icon>
+            <p>No hay solicitudes para mostrar</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </mat-card>
+</div><p>lista-solicitudes works!</p>

@@ -1,1 +1,129 @@
-<p>crear-solicitud works!</p>
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>add_circle</mat-icon>
+        Nueva Solicitud de Aprobación
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading inicial -->
+      <div class="spinner-container" *ngIf="loadingData">
+        <mat-spinner></mat-spinner>
+        <p>Cargando datos...</p>
+      </div>
+
+      <!-- Formulario -->
+      <form [formGroup]="solicitudForm" (ngSubmit)="onSubmit()" *ngIf="!loadingData">
+        
+        <!-- Título -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título de la Solicitud</mat-label>
+          <input 
+            matInput 
+            formControlName="titulo" 
+            placeholder="Ej: Despliegue de microservicio v2.0"
+            maxlength="255">
+          <mat-icon matPrefix>title</mat-icon>
+          <mat-hint align="end">{{ titulo?.value?.length || 0 }}/255</mat-hint>
+          <mat-error *ngIf="titulo?.hasError('required')">
+            El título es obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Descripción -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción Detallada</mat-label>
+          <textarea 
+            matInput 
+            formControlName="descripcion"
+            placeholder="Describe los detalles de la solicitud..."
+            rows="5">
+          </textarea>
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-error *ngIf="descripcion?.hasError('required')">
+            La descripción es obligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Tipo de Solicitud -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tipo de Solicitud</mat-label>
+          <mat-select formControlName="tipoSolicitudId">
+            <mat-option *ngFor="let tipo of tiposSolicitud" [value]="tipo.id">
+              <strong>{{ tipo.nombre }}</strong> - {{ tipo.descripcion }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>category</mat-icon>
+          <mat-error *ngIf="tipoSolicitudId?.hasError('required')">
+            Selecciona un tipo de solicitud
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Grid para Solicitante y Responsable -->
+        <div class="form-row">
+          <!-- Solicitante -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Solicitante</mat-label>
+            <mat-select formControlName="solicitanteId">
+              <mat-option *ngFor="let usuario of usuarios" [value]="usuario.id">
+                {{ usuario.nombreCompleto }} ({{ usuario.usuarioRed }})
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="solicitanteId?.hasError('required')">
+              Selecciona un solicitante
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Responsable -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Responsable Aprobador</mat-label>
+            <mat-select formControlName="responsableId">
+              <mat-option *ngFor="let usuario of usuarios" [value]="usuario.id">
+                {{ usuario.nombreCompleto }} ({{ usuario.usuarioRed }})
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>supervisor_account</mat-icon>
+            <mat-error *ngIf="responsableId?.hasError('required')">
+              Selecciona un responsable
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Información adicional -->
+        <mat-card class="info-card">
+          <mat-icon>info</mat-icon>
+          <div>
+            <strong>Información:</strong>
+            <p>El responsable aprobador recibirá una notificación y deberá aprobar o rechazar esta solicitud.</p>
+          </div>
+        </mat-card>
+
+      </form>
+    </mat-card-content>
+
+    <!-- Acciones -->
+    <mat-card-actions align="end">
+      <button 
+        mat-button 
+        type="button"
+        (click)="cancelar()"
+        [disabled]="loading">
+        <mat-icon>cancel</mat-icon>
+        Cancelar
+      </button>
+      <button 
+        mat-raised-button 
+        color="primary"
+        type="submit"
+        (click)="onSubmit()"
+        [disabled]="loading || loadingData">
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <mat-icon *ngIf="!loading">send</mat-icon>
+        {{ loading ? 'Creando...' : 'Crear Solicitud' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div><p>crear-solicitud works!</p>
