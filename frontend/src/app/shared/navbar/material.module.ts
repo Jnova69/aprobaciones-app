@@ -15,6 +15,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatMenuModule } from '@angular/material/menu';
 
 const materialModules = [
   MatToolbarModule,
@@ -33,6 +34,8 @@ const materialModules = [
   MatListModule,
   MatDividerModule,
   MatExpansionModule,
+  MatMenuModule,
+  MatButtonModule,
 ];
 
 @NgModule({

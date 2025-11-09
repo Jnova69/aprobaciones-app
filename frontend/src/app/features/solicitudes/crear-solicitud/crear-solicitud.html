@@ -17,6 +17,16 @@
       <!-- Formulario -->
       <form [formGroup]="solicitudForm" (ngSubmit)="onSubmit()" *ngIf="!loadingData">
         
+        <!-- Info del Usuario Actual -->
+        <div class="current-user-info" *ngIf="currentUser">
+          <mat-icon>person</mat-icon>
+          <div>
+            <strong>Solicitante:</strong>
+            <p>{{ currentUser.nombreCompleto }} ({{ currentUser.usuarioRed }})</p>
+            <small>Esta solicitud se creará a tu nombre</small>
+          </div>
+        </div>
+
         <!-- Título -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Título de la Solicitud</mat-label>
@@ -61,43 +71,31 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Grid para Solicitante y Responsable -->
-        <div class="form-row">
-          <!-- Solicitante -->
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Solicitante</mat-label>
-            <mat-select formControlName="solicitanteId">
-              <mat-option *ngFor="let usuario of usuarios" [value]="usuario.id">
-                {{ usuario.nombreCompleto }} ({{ usuario.usuarioRed }})
-              </mat-option>
-            </mat-select>
-            <mat-icon matPrefix>person</mat-icon>
-            <mat-error *ngIf="solicitanteId?.hasError('required')">
-              Selecciona un solicitante
-            </mat-error>
-          </mat-form-field>
-
-          <!-- Responsable -->
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Responsable Aprobador</mat-label>
-            <mat-select formControlName="responsableId">
-              <mat-option *ngFor="let usuario of usuarios" [value]="usuario.id">
-                {{ usuario.nombreCompleto }} ({{ usuario.usuarioRed }})
-              </mat-option>
-            </mat-select>
-            <mat-icon matPrefix>supervisor_account</mat-icon>
-            <mat-error *ngIf="responsableId?.hasError('required')">
-              Selecciona un responsable
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <!-- Responsable Aprobador (Solo Admins) -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Responsable Aprobador</mat-label>
+          <mat-select formControlName="responsableId">
+            <mat-option *ngFor="let admin of administradores" [value]="admin.id">
+              <div class="admin-option">
+                <strong>{{ admin.nombreCompleto }}</strong>
+                <small>({{ admin.usuarioRed }}) - {{ admin.area }}</small>
+                <mat-chip class="admin-badge">ADMIN</mat-chip>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>supervisor_account</mat-icon>
+          <mat-hint>Selecciona el administrador que debe aprobar esta solicitud</mat-hint>
+          <mat-error *ngIf="responsableId?.hasError('required')">
+            Selecciona un responsable
+          </mat-error>
+        </mat-form-field>
 
         <!-- Información adicional -->
         <mat-card class="info-card">
           <mat-icon>info</mat-icon>
           <div>
             <strong>Información:</strong>
-            <p>El responsable aprobador recibirá una notificación y deberá aprobar o rechazar esta solicitud.</p>
+            <p>El responsable recibirá una notificación por email y deberá aprobar o rechazar esta solicitud.</p>
           </div>
         </mat-card>
 
@@ -126,4 +124,4 @@
       </button>
     </mat-card-actions>
   </mat-card>
-</div><p>crear-solicitud works!</p>
+</div>

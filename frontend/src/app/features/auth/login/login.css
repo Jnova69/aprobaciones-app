@@ -1,0 +1,97 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.login-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+mat-card-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333;
+  margin: 10px 0;
+}
+
+mat-card-subtitle {
+  text-align: center;
+  color: #666;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.demo-info {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  border-left: 4px solid #2196f3;
+  margin: 10px 0;
+}
+
+.demo-info mat-icon {
+  color: #2196f3;
+  margin-top: 2px;
+}
+
+.demo-info small {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.submit-button {
+  height: 48px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.submit-button mat-spinner {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.register-link {
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+  color: #666;
+}
+
+mat-card-actions {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}

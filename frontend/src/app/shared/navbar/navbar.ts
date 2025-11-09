@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { MaterialModule } from './material.module';
+import { Router, RouterModule } from '@angular/router';
+import { MaterialModule } from '../navbar/material.module';
+import { AuthService } from '../../core/services/auth.service';
+import { Usuario } from '../../models/usuario.model';
 
 @Component({
   selector: 'app-navbar',
@@ -10,9 +12,26 @@ import { MaterialModule } from './material.module';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
-export class Navbar {
-  usuarioActual = {
-    nombreCompleto: 'Usuario Demo',
-    usuarioRed: 'demo',
-  };
+export class Navbar implements OnInit {
+  currentUser: Usuario | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
 }

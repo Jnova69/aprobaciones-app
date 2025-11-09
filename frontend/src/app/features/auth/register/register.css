@@ -1,0 +1,118 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  padding: 20px;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.register-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  color: #f5576c;
+  margin-bottom: 10px;
+}
+
+mat-card-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333;
+  margin: 10px 0;
+}
+
+mat-card-subtitle {
+  text-align: center;
+  color: #666;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.info-box {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background-color: #fff3cd;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+  margin: 10px 0;
+}
+
+.info-box mat-icon {
+  color: #ffc107;
+  margin-top: 2px;
+}
+
+.info-box small {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.submit-button {
+  height: 48px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.submit-button mat-spinner {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.login-link {
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+  color: #666;
+}
+
+mat-card-actions {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Scrollbar personalizado */
+.register-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.register-card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.register-card::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.register-card::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

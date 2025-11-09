@@ -1,0 +1,86 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <div class="header-content">
+        <mat-icon class="login-icon">lock</mat-icon>
+        <mat-card-title>Iniciar Sesión</mat-card-title>
+        <mat-card-subtitle>Sistema de Aprobaciones</mat-card-subtitle>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input 
+            matInput 
+            type="email"
+            formControlName="email"
+            placeholder="tu-email@banco.com">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="email?.hasError('required')">
+            El email es obligatorio
+          </mat-error>
+          <mat-error *ngIf="email?.hasError('email')">
+            Email inválido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="••••••••">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="hidePassword = !hidePassword">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="password?.hasError('required')">
+            La contraseña es obligatoria
+          </mat-error>
+          <mat-error *ngIf="password?.hasError('minlength')">
+            Mínimo 6 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Demo Credentials Info -->
+        <div class="demo-info">
+          <mat-icon>info</mat-icon>
+          <div>
+            <strong>Credenciales de prueba:</strong><br>
+            <small>Admin: admin@banco.com / Admin123!</small><br>
+            <small>User: jperez@banco.com / Admin123!</small>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          class="full-width submit-button"
+          [disabled]="loading">
+          <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+          <span *ngIf="!loading">Iniciar Sesión</span>
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="register-link">
+        ¿No tienes cuenta?
+        <a routerLink="/register" mat-button color="primary">Regístrate aquí</a>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

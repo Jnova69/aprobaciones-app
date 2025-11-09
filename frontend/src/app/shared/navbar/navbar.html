@@ -7,18 +7,48 @@
   
   <span class="spacer"></span>
   
-  <button mat-button routerLink="/solicitudes">
-    <mat-icon>list</mat-icon>
-    Solicitudes
-  </button>
-  
-  <button mat-raised-button color="accent" routerLink="/solicitudes/nueva">
-    <mat-icon>add</mat-icon>
-    Nueva Solicitud
-  </button>
-  
-  <span class="user-info">
-    <mat-icon>account_circle</mat-icon>
-    {{ usuarioActual.nombreCompleto }}
-  </span>
+  <ng-container *ngIf="currentUser">
+    <button mat-button routerLink="/solicitudes">
+      <mat-icon>list</mat-icon>
+      Solicitudes
+    </button>
+    
+    <button mat-raised-button color="accent" routerLink="/solicitudes/nueva">
+      <mat-icon>add</mat-icon>
+      Nueva Solicitud
+    </button>
+    
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
+      <mat-icon>account_circle</mat-icon>
+      <span class="user-name">{{ currentUser.nombreCompleto }}</span>
+      <mat-chip class="role-chip" [class.admin]="isAdmin()">
+        {{ currentUser.rol }}
+      </mat-chip>
+    </button>
+    
+    <mat-menu #userMenu="matMenu">
+      <div class="user-menu-header">
+        <mat-icon>person</mat-icon>
+        <div class="user-info">
+          <strong>{{ currentUser.nombreCompleto }}</strong>
+          <small>{{ currentUser.email }}</small>
+          <small *ngIf="currentUser.area">{{ currentUser.area }}</small>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item disabled>
+        <mat-icon>badge</mat-icon>
+        <span>Usuario: {{ currentUser.usuarioRed }}</span>
+      </button>
+      <button mat-menu-item disabled>
+        <mat-icon>shield</mat-icon>
+        <span>Rol: {{ currentUser.rol }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </ng-container>
 </mat-toolbar>
