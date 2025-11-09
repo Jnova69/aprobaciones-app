@@ -1,12 +1,11 @@
--- backend/database/init.sql
-
--- Tabla usuarios
 CREATE TABLE usuarios (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     usuario_red VARCHAR(100) UNIQUE NOT NULL,
     nombre_completo VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
     area VARCHAR(100),
+    rol VARCHAR(50) DEFAULT 'USER' NOT NULL,
     activo BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -75,14 +74,19 @@ CREATE INDEX idx_solicitudes_solicitante ON solicitudes(solicitante_id);
 CREATE INDEX idx_solicitudes_responsable ON solicitudes(responsable_id);
 CREATE INDEX idx_historial_solicitud ON historial_solicitudes(solicitud_id);
 CREATE INDEX idx_notificaciones_usuario ON notificaciones(usuario_id, leida);
+CREATE INDEX idx_usuarios_email ON usuarios(email);
 
 -- Datos iniciales
-INSERT INTO usuarios (usuario_red, nombre_completo, email, area) VALUES
-('jperez', 'Juan Pérez', 'jperez@banco.com', 'Desarrollo'),
-('mgarcia', 'María García', 'mgarcia@banco.com', 'DevOps'),
-('lrodriguez', 'Luis Rodríguez', 'lrodriguez@banco.com', 'Arquitectura'),
-('alopez', 'Ana López', 'alopez@banco.com', 'Seguridad');
+-- Password para todos: "Admin123!" (encriptada con bcrypt)
+-- IMPORTANTE: Esta es la contraseña temporal, los usuarios deben cambiarla
+INSERT INTO usuarios (usuario_red, nombre_completo, email, password, area, rol) VALUES
+('admin', 'Administrador Sistema', 'admin@banco.com', '$2b$10$KLcc37JGlMJscYx4OsiB.OBfrJwvE7BGftW89CmkLRnGMymCeFfqu', 'Administración', 'ADMIN'),
+('jperez', 'Juan Pérez', 'jperez@banco.com', '$2b$10$KLcc37JGlMJscYx4OsiB.OBfrJwvE7BGftW89CmkLRnGMymCeFfqu', 'Desarrollo', 'USER'),
+('mgarcia', 'María García', 'mgarcia@banco.com', '$2b$10$KLcc37JGlMJscYx4OsiB.OBfrJwvE7BGftW89CmkLRnGMymCeFfqu', 'DevOps', 'USER'),
+('lrodriguez', 'Luis Rodríguez', 'lrodriguez@banco.com', '$2b$10$KLcc37JGlMJscYx4OsiB.OBfrJwvE7BGftW89CmkLRnGMymCeFfqu', 'Arquitectura', 'ADMIN'),
+('alopez', 'Ana López', 'alopez@banco.com', '$2b$10$KLcc37JGlMJscYx4OsiB.OBfrJwvE7BGftW89CmkLRnGMymCeFfqu', 'Seguridad', 'USER');
 
+-- Tipos de solicitud
 INSERT INTO tipos_solicitud (codigo, nombre, descripcion) VALUES
 ('DEPLOY', 'Despliegue', 'Aprobación para desplegar nueva versión'),
 ('ACCESS', 'Acceso', 'Solicitud de acceso a herramientas'),

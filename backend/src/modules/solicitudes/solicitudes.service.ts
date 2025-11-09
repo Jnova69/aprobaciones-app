@@ -12,6 +12,7 @@ import { CreateComentarioDto } from './dto/create-comentario.dto';
 import { HistorialService } from '../historial/historial.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { TiposSolicitudService } from '../tipos-solicitud/tipos-solicitud.service';
+import { EmailService } from '../email/email.service';  // NUEVO
 
 @Injectable()
 export class SolicitudesService {
@@ -24,13 +25,14 @@ export class SolicitudesService {
     private readonly usuariosService: UsuariosService,
     private readonly tiposSolicitudService: TiposSolicitudService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly emailService: EmailService,  // NUEVO
   ) {}
 
   async create(createSolicitudDto: CreateSolicitudDto): Promise<Solicitud> {
     // Validar que existan los usuarios y tipo de solicitud
-    await this.usuariosService.findOne(createSolicitudDto.solicitanteId);
-    await this.usuariosService.findOne(createSolicitudDto.responsableId);
-    await this.tiposSolicitudService.findOne(createSolicitudDto.tipoSolicitudId);
+    const solicitante = await this.usuariosService.findOne(createSolicitudDto.solicitanteId);
+    const responsable = await this.usuariosService.findOne(createSolicitudDto.responsableId);
+    const tipoSolicitud = await this.tiposSolicitudService.findOne(createSolicitudDto.tipoSolicitudId);
 
     // Generar código único para la solicitud
     const codigoSolicitud = await this.generarCodigoSolicitud();
@@ -51,12 +53,37 @@ export class SolicitudesService {
       estadoNuevo: EstadoSolicitud.PENDIENTE,
     });
 
-    // Emitir evento para notificación (Patrón Observer)
+    // Emitir evento para notificación
     this.eventEmitter.emit('solicitud.creada', {
       solicitudId: solicitudGuardada.id,
       responsableId: createSolicitudDto.responsableId,
       titulo: createSolicitudDto.titulo,
     });
+
+    // 🆕 ENVIAR EMAIL AL RESPONSABLE
+    try {
+      await this.emailService.sendNewSolicitudEmail({
+        responsableEmail: responsable.email,
+        responsableNombre: responsable.nombreCompleto,
+        codigoSolicitud: solicitudGuardada.codigoSolicitud,
+        titulo: solicitudGuardada.titulo,
+        tipoSolicitud: tipoSolicitud.nombre,
+        solicitanteNombre: solicitante.nombreCompleto,
+        solicitanteEmail: solicitante.email,
+        fechaSolicitud: solicitudGuardada.fechaSolicitud.toLocaleString('es-CO', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        descripcion: solicitudGuardada.descripcion,
+        solicitudId: solicitudGuardada.id,
+      });
+    } catch (error) {
+      console.error('Error al enviar email de nueva solicitud:', error);
+      // No falla la creación si el email falla
+    }
 
     return solicitudGuardada;
   }
@@ -123,6 +150,9 @@ export class SolicitudesService {
 
     const solicitudActualizada = await this.solicitudRepository.save(solicitud);
 
+    // Obtener datos del aprobador
+    const aprobador = await this.usuariosService.findOne(aprobarDto.usuarioId);
+
     // Registrar en historial
     await this.historialService.create({
       solicitudId: solicitud.id,
@@ -149,6 +179,28 @@ export class SolicitudesService {
       titulo: solicitud.titulo,
     });
 
+    // 🆕 ENVIAR EMAIL AL SOLICITANTE
+    try {
+      await this.emailService.sendSolicitudAprobadaEmail({
+        solicitanteEmail: solicitud.solicitante.email,
+        solicitanteNombre: solicitud.solicitante.nombreCompleto,
+        codigoSolicitud: solicitud.codigoSolicitud,
+        titulo: solicitud.titulo,
+        aprobadorNombre: aprobador.nombreCompleto,
+        fechaRespuesta: solicitud.fechaRespuesta.toLocaleString('es-CO', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        comentario: aprobarDto.comentario,
+        solicitudId: solicitud.id,
+      });
+    } catch (error) {
+      console.error('Error al enviar email de solicitud aprobada:', error);
+    }
+
     return solicitudActualizada;
   }
 
@@ -169,6 +221,9 @@ export class SolicitudesService {
     solicitud.fechaRespuesta = new Date();
 
     const solicitudActualizada = await this.solicitudRepository.save(solicitud);
+
+    // Obtener datos del rechazador
+    const rechazador = await this.usuariosService.findOne(rechazarDto.usuarioId);
 
     // Registrar en historial
     await this.historialService.create({
@@ -193,6 +248,28 @@ export class SolicitudesService {
       solicitanteId: solicitud.solicitanteId,
       titulo: solicitud.titulo,
     });
+
+    // 🆕 ENVIAR EMAIL AL SOLICITANTE
+    try {
+      await this.emailService.sendSolicitudRechazadaEmail({
+        solicitanteEmail: solicitud.solicitante.email,
+        solicitanteNombre: solicitud.solicitante.nombreCompleto,
+        codigoSolicitud: solicitud.codigoSolicitud,
+        titulo: solicitud.titulo,
+        rechazadorNombre: rechazador.nombreCompleto,
+        fechaRespuesta: solicitud.fechaRespuesta.toLocaleString('es-CO', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        comentario: rechazarDto.comentario,
+        solicitudId: solicitud.id,
+      });
+    } catch (error) {
+      console.error('Error al enviar email de solicitud rechazada:', error);
+    }
 
     return solicitudActualizada;
   }

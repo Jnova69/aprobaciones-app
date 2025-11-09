@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { TiposSolicitudModule } from './modules/tipos-solicitud/tipos-solicitud.module';
 import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
 import { HistorialModule } from './modules/historial/historial.module';
 import { NotificacionesModule } from './modules/notificaciones/notificaciones.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
   imports: [
@@ -31,11 +32,13 @@ import { NotificacionesModule } from './modules/notificaciones/notificaciones.mo
       }),
     }),
     EventEmitterModule.forRoot(),
+    AuthModule,
     UsuariosModule,
     TiposSolicitudModule,
     SolicitudesModule,
     HistorialModule,
     NotificacionesModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

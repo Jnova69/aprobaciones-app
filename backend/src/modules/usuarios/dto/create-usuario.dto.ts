@@ -19,4 +19,8 @@ export class CreateUsuarioDto {
   @IsOptional()
   @MaxLength(100)
   area?: string;
+
+  @IsString()
+  @IsOptional()
+  password?: string;
 }

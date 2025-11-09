@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .success-icon {
+            font-size: 60px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .solicitud-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #38ef7d;
+        }
+        .label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 15px;
+            display: block;
+        }
+        .value {
+            font-size: 16px;
+            color: #333;
+            margin-top: 5px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #38ef7d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✅ Solicitud Aprobada</h1>
+    </div>
+    <div class="content">
+        <div class="success-icon">✓</div>
+        
+        <h2>Hola {{solicitanteNombre}},</h2>
+        <p>¡Buenas noticias! Tu solicitud ha sido <strong style="color: #38ef7d;">APROBADA</strong>.</p>
+
+        <div class="solicitud-box">
+            <span class="label">Código de Solicitud</span>
+            <div class="value"><strong>{{codigoSolicitud}}</strong></div>
+
+            <span class="label">Título</span>
+            <div class="value">{{titulo}}</div>
+
+            <span class="label">Aprobada por</span>
+            <div class="value">{{aprobadorNombre}}</div>
+
+            <span class="label">Fecha de Aprobación</span>
+            <div class="value">{{fechaRespuesta}}</div>
+
+            {{#if comentario}}
+            <span class="label">Comentario</span>
+            <div class="value">{{comentario}}</div>
+            {{/if}}
+        </div>
+
+        <p>Puedes ver el detalle completo y el historial en el sistema.</p>
+
+        <center>
+            <a href="http://localhost:4200/solicitudes/{{solicitudId}}" class="button">Ver Detalles</a>
+        </center>
+
+        <p>Saludos,<br><strong>Sistema de Aprobaciones</strong></p>
+    </div>
+    <div class="footer">
+        <p>Este es un correo automático, por favor no responder.</p>
+        <p>&copy; 2025 Sistema de Aprobaciones - Banco</p>
+    </div>
+</body>
+</html>

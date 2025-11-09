@@ -8,6 +8,7 @@ import { HistorialModule } from '../historial/historial.module';
 import { NotificacionesModule } from '../notificaciones/notificaciones.module';
 import { UsuariosModule } from '../usuarios/usuarios.module';
 import { TiposSolicitudModule } from '../tipos-solicitud/tipos-solicitud.module';
+import { EmailModule } from '../email/email.module'; 
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TiposSolicitudModule } from '../tipos-solicitud/tipos-solicitud.module'
     NotificacionesModule,
     UsuariosModule,
     TiposSolicitudModule,
+    EmailModule,
   ],
   controllers: [SolicitudesController],
   providers: [SolicitudesService],
