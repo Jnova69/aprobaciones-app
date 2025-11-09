@@ -9,21 +9,32 @@ COPY . .
 
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
 COPY package*.json ./
 
-ENV DB_HOST=postgres
-ENV DB_PORT=5432
-ENV DB_USERNAME=admin
-ENV DB_PASSWORD=admin123
-ENV DB_DATABASE=aprobaciones_db
-ENV PORT=3000
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+RUN mkdir -p dist/modules/email/templates && \
+    cp -r src/modules/email/templates/* dist/modules/email/templates/ 2>/dev/null || true
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY --from=builder /app/dist ./dist
+
+COPY --from=builder /app/src/modules/email/templates ./dist/modules/email/templates
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main"]

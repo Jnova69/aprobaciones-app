@@ -143,9 +143,23 @@ export class EmailService {
   }
 
   private loadTemplate(templateName: string): string {
-    const templatePath = path.join(__dirname, 'templates', templateName);
-    return fs.readFileSync(templatePath, 'utf-8');
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
+  let templatePath: string;
+  
+  if (isDevelopment) {
+    templatePath = path.join(process.cwd(), 'src', 'modules', 'email', 'templates', templateName);
+  } else {
+    templatePath = path.join(__dirname, 'templates', templateName);
   }
+  
+  try {
+    return fs.readFileSync(templatePath, 'utf-8');
+  } catch (error) {
+    this.logger.error(`Error al cargar template ${templateName} desde ${templatePath}:`, error);
+    throw error;
+  }
+}
 
   private replaceVariables(template: string, variables: Record<string, any>): string {
     let result = template;

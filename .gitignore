@@ -1,14 +1,19 @@
+# Environment
+.env
+*.env
+!.env.example
+
 # Dependencies
 node_modules/
 */node_modules/
 
-# Environment
-.env
-*.env
-
 # Build
 dist/
+*/dist/
 build/
+
+# Docker
+.docker/
 
 # IDE
 .vscode/
@@ -20,3 +25,8 @@ Thumbs.db
 
 # Logs
 *.log
+npm-debug.log*
+
+# Database
+*.db
+*.sqlite

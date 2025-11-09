@@ -1,4 +1,5 @@
 services:
+  # Base de datos PostgreSQL
   postgres:
     image: postgres:15-alpine
     container_name: aprobaciones-db
@@ -15,12 +16,62 @@ services:
       - aprobaciones-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d aprobaciones_db"]
-      interval: 5s       
-      timeout: 3s        
-      retries: 5         
-      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # Opcional: PgAdmin para ver la BD visualmente
+  # Backend NestJS
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aprobaciones-backend
+    environment:
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+      DB_DATABASE: aprobaciones_db
+      
+      # Application
+      PORT: 3000
+      NODE_ENV: production
+      
+      # JWT
+      JWT_SECRET: tu-secreto-super-seguro-cambiar-en-produccion-12345
+      JWT_EXPIRATION: 24h
+      
+      # Email
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USER: ${MAIL_USER:-tu-email@gmail.com}
+      MAIL_PASS: ${MAIL_PASS:-tu-password}
+      MAIL_FROM: ${MAIL_FROM:-Sistema de Aprobaciones <noreply@aprobaciones.com>}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - aprobaciones-network
+    restart: unless-stopped
+
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aprobaciones-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - aprobaciones-network
+    restart: unless-stopped
+
+  # PgAdmin (opcional - herramienta de gestión)
   pgadmin:
     image: dpage/pgadmin4
     container_name: aprobaciones-pgadmin
@@ -34,41 +85,6 @@ services:
     networks:
       - aprobaciones-network
 
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: dockerfile
-  #   container_name: aprobaciones-backend
-  #   environment:
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #     DB_USERNAME: admin
-  #     DB_PASSWORD: admin123
-  #     DB_DATABASE: aprobaciones_db
-  #     PORT: 3000
-  #     NODE_ENV: production
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   networks:
-  #     - aprobaciones-network
-  #   restart: unless-stopped
-
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: aprobaciones-frontend
-  #   ports:
-  #     - "4200:80"
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - aprobaciones-network
-  #   restart: unless-stopped
-    
 volumes:
   postgres_data:
 
