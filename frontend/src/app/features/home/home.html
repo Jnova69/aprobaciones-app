@@ -1,5 +1,17 @@
 <div class="container">
-  <h1>Bienvenido al Sistema de Aprobaciones</h1>
+  <h1>Bienvenido {{ currentUser?.nombreCompleto }}</h1>
+  
+  <div class="role-message" [class.admin]="isAdmin">
+    <mat-icon>{{ isAdmin ? 'admin_panel_settings' : 'person' }}</mat-icon>
+    <p *ngIf="isAdmin">
+      <strong>Panel de Administrador</strong><br>
+      Puedes ver y gestionar todas las solicitudes del sistema
+    </p>
+    <p *ngIf="!isAdmin">
+      <strong>Mis Solicitudes</strong><br>
+      Aquí puedes ver el estado de todas tus solicitudes
+    </p>
+  </div>
   
   <div class="stats-container" *ngIf="!loading">
     <mat-card class="stat-card">
@@ -57,4 +69,4 @@
       Ver Todas las Solicitudes
     </button>
   </div>
-</div><p>home works!</p>
+</div>

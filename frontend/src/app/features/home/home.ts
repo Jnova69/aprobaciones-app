@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../shared/navbar/material.module';
 import { SolicitudesService } from '../../core/services/solicitudes';
+import { AuthService } from '../../core/services/auth.service';
 import { Solicitud, EstadoSolicitud } from '../../models/solicitud.model';
+import { Usuario } from '../../models/usuario.model';
 
 @Component({
   selector: 'app-home',
@@ -18,8 +20,16 @@ export class Home implements OnInit {
   aprobadas = 0;
   rechazadas = 0;
   loading = true;
+  currentUser: Usuario | null = null;
+  isAdmin = false;
 
-  constructor(private solicitudesService: SolicitudesService) {}
+  constructor(
+    private solicitudesService: SolicitudesService,
+    private authService: AuthService
+  ) {
+    this.currentUser = this.authService.getCurrentUser();
+    this.isAdmin = this.authService.isAdmin();
+  }
 
   ngOnInit(): void {
     this.cargarEstadisticas();

@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../shared/navbar/material.module';
 import { SolicitudesService } from '../../../core/services/solicitudes';
+import { AuthService } from '../../../core/services/auth.service';
 import { Solicitud, EstadoSolicitud } from '../../../models/solicitud.model';
+import { UserRole } from '../../../models/usuario.model';
 
 @Component({
   selector: 'app-lista-solicitudes',
@@ -17,6 +19,7 @@ export class ListaSolicitudes implements OnInit {
   solicitudesFiltradas: Solicitud[] = [];
   loading = true;
   filtroEstado: string = 'TODAS';
+  isAdmin = false;
 
   displayedColumns: string[] = [
     'codigoSolicitud',
@@ -29,7 +32,12 @@ export class ListaSolicitudes implements OnInit {
     'acciones'
   ];
 
-  constructor(private solicitudesService: SolicitudesService) {}
+  constructor(
+    private solicitudesService: SolicitudesService,
+    private authService: AuthService
+  ) {
+    this.isAdmin = this.authService.isAdmin();
+  }
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -37,6 +45,7 @@ export class ListaSolicitudes implements OnInit {
 
   cargarSolicitudes(): void {
     this.loading = true;
+    // El backend ya filtra según el rol del usuario
     this.solicitudesService.getAll().subscribe({
       next: (data) => {
         this.solicitudes = data;

@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class AprobarSolicitudDto {
   @IsUUID('4', { message: 'El ID del usuario debe ser un UUID válido' })
-  @IsNotEmpty({ message: 'El usuario aprobador es obligatorio' })
-  usuarioId: string;
+  @IsOptional()  // Ahora es opcional porque viene del token
+  usuarioId?: string;
 
   @IsString()
   @IsOptional()

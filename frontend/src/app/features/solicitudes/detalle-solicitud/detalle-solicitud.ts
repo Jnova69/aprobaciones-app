@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { SolicitudesService } from '../../../core/services/solicitudes';
 import { Solicitud, EstadoSolicitud, HistorialSolicitud } from '../../../models/solicitud.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-detalle-solicitud',
@@ -25,9 +26,6 @@ export class DetalleSolicitud implements OnInit {
   rechazarForm: FormGroup;
   
   EstadoSolicitud = EstadoSolicitud;
-  
-  // Simulación de usuario actual
-  usuarioActualId = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -35,7 +33,8 @@ export class DetalleSolicitud implements OnInit {
     private fb: FormBuilder,
     private solicitudesService: SolicitudesService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {
     this.aprobarForm = this.fb.group({
       comentario: ['']
@@ -59,8 +58,6 @@ export class DetalleSolicitud implements OnInit {
     this.solicitudesService.getOne(id).subscribe({
       next: (data) => {
         this.solicitud = data;
-        // Simular usuario actual como el responsable
-        this.usuarioActualId = data.responsableId;
         this.loading = false;
       },
       error: (error) => {
@@ -83,65 +80,65 @@ export class DetalleSolicitud implements OnInit {
   }
 
   aprobar(): void {
-    if (!this.solicitud) return;
+  if (!this.solicitud) return;
 
-    this.procesando = true;
-    const data = {
-      usuarioId: this.usuarioActualId,
-      comentario: this.aprobarForm.get('comentario')?.value || undefined
-    };
+  this.procesando = true;
+  const data = {
+    comentario: this.aprobarForm.get('comentario')?.value || undefined
+    // NO enviar usuarioId, se obtiene del token en el backend
+  };
 
-    this.solicitudesService.aprobar(this.solicitud.id, data).subscribe({
-      next: () => {
-        this.snackBar.open('Solicitud aprobada exitosamente', 'Cerrar', { 
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
-        this.cargarSolicitud(this.solicitud!.id);
-        this.cargarHistorial(this.solicitud!.id);
-        this.procesando = false;
-      },
-      error: (error) => {
-        console.error('Error al aprobar:', error);
-        this.snackBar.open(error.error?.message || 'Error al aprobar la solicitud', 'Cerrar', { 
-          duration: 3000 
-        });
-        this.procesando = false;
-      }
-    });
-  }
-
-  rechazar(): void {
-    if (!this.solicitud || !this.rechazarForm.valid) {
-      this.rechazarForm.markAllAsTouched();
-      return;
+  this.solicitudesService.aprobar(this.solicitud.id, data as any).subscribe({
+    next: () => {
+      this.snackBar.open('Solicitud aprobada exitosamente', 'Cerrar', { 
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      });
+      this.cargarSolicitud(this.solicitud!.id);
+      this.cargarHistorial(this.solicitud!.id);
+      this.procesando = false;
+    },
+    error: (error) => {
+      console.error('Error al aprobar:', error);
+      this.snackBar.open(error.error?.message || 'Error al aprobar la solicitud', 'Cerrar', { 
+        duration: 3000 
+      });
+      this.procesando = false;
     }
+  });
+}
 
-    this.procesando = true;
-    const data = {
-      usuarioId: this.usuarioActualId,
-      comentario: this.rechazarForm.get('comentario')?.value
-    };
-
-    this.solicitudesService.rechazar(this.solicitud.id, data).subscribe({
-      next: () => {
-        this.snackBar.open('Solicitud rechazada', 'Cerrar', { 
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-        this.cargarSolicitud(this.solicitud!.id);
-        this.cargarHistorial(this.solicitud!.id);
-        this.procesando = false;
-      },
-      error: (error) => {
-        console.error('Error al rechazar:', error);
-        this.snackBar.open(error.error?.message || 'Error al rechazar la solicitud', 'Cerrar', { 
-          duration: 3000 
-        });
-        this.procesando = false;
-      }
-    });
+rechazar(): void {
+  if (!this.solicitud || !this.rechazarForm.valid) {
+    this.rechazarForm.markAllAsTouched();
+    return;
   }
+
+  this.procesando = true;
+  const data = {
+    comentario: this.rechazarForm.get('comentario')?.value
+    // NO enviar usuarioId, se obtiene del token en el backend
+  };
+
+  this.solicitudesService.rechazar(this.solicitud.id, data as any).subscribe({
+    next: () => {
+      this.snackBar.open('Solicitud rechazada', 'Cerrar', { 
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      this.cargarSolicitud(this.solicitud!.id);
+      this.cargarHistorial(this.solicitud!.id);
+      this.procesando = false;
+    },
+    error: (error) => {
+      console.error('Error al rechazar:', error);
+      this.snackBar.open(error.error?.message || 'Error al rechazar la solicitud', 'Cerrar', { 
+        duration: 3000 
+      });
+      this.procesando = false;
+    }
+  });
+}
 
   volver(): void {
     this.router.navigate(['/solicitudes']);
@@ -152,7 +149,15 @@ export class DetalleSolicitud implements OnInit {
   }
 
   puedeAprobarRechazar(): boolean {
-    return this.solicitud?.estado === EstadoSolicitud.PENDIENTE &&
-           this.solicitud?.responsableId === this.usuarioActualId;
+  if (!this.isAdmin()) {
+    return false;
   }
+  
+  return this.solicitud?.estado === EstadoSolicitud.PENDIENTE;
+}
+
+isAdmin(): boolean {
+  return this.authService.isAdmin();
+}
+
 }

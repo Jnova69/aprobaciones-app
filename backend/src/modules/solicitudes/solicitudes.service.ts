@@ -12,7 +12,8 @@ import { CreateComentarioDto } from './dto/create-comentario.dto';
 import { HistorialService } from '../historial/historial.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { TiposSolicitudService } from '../tipos-solicitud/tipos-solicitud.service';
-import { EmailService } from '../email/email.service';  // NUEVO
+import { EmailService } from '../email/email.service';
+import { UserRole } from '../usuarios/entities/usuario.entity';
 
 @Injectable()
 export class SolicitudesService {
@@ -301,4 +302,47 @@ export class SolicitudesService {
     const numero = String(count + 1).padStart(4, '0');
     return `SOL-${year}-${numero}`;
   }
+
+async findOneWithAccess(id: string, userId: string, rol: UserRole): Promise<Solicitud> {
+  const solicitud = await this.findOne(id);
+  
+  // Admin puede ver todas
+  if (rol === UserRole.ADMIN) {
+    return solicitud;
+  }
+  
+  // User solo puede ver si es solicitante o responsable
+  if (solicitud.solicitanteId !== userId && solicitud.responsableId !== userId) {
+    throw new BadRequestException('No tienes permiso para ver esta solicitud');
+  }
+  
+  return solicitud;
+}
+
+async getHistorialWithAccess(solicitudId: string, userId: string, rol: UserRole) {
+  const solicitud = await this.findOne(solicitudId);
+  
+  // Admin puede ver todo
+  if (rol === UserRole.ADMIN) {
+    return await this.historialService.findBySolicitud(solicitudId);
+  }
+  
+  // User solo puede ver si es solicitante o responsable
+  if (solicitud.solicitanteId !== userId && solicitud.responsableId !== userId) {
+    throw new BadRequestException('No tienes permiso para ver el historial de esta solicitud');
+  }
+  
+  return await this.historialService.findBySolicitud(solicitudId);
+}
+
+async updateWithAccess(id: string, updateSolicitudDto: UpdateSolicitudDto, userId: string, rol: UserRole): Promise<Solicitud> {
+  const solicitud = await this.findOne(id);
+  
+  // Solo el solicitante puede editar (si está pendiente)
+  if (solicitud.solicitanteId !== userId && rol !== UserRole.ADMIN) {
+    throw new BadRequestException('Solo el solicitante puede editar la solicitud');
+  }
+  
+  return await this.update(id, updateSolicitudDto);
+}
 }
